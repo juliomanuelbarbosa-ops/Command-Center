@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cyber-bg: #000000;
+  --color-cyber-cyan: #00FFFF;
+  --color-cyber-magenta: #FF00FF;
+  --color-cyber-purple: #9D00FF;
+  --color-cyber-glass: rgba(0, 0, 0, 0.6);
+  --color-cyber-border: rgba(255, 255, 255, 0.1);
+}
+
+@layer base {
+  body {
+    @apply bg-cyber-bg text-white font-sans antialiased selection:bg-cyber-magenta selection:text-white;
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(157, 0, 255, 0.15), transparent 50%),
+      radial-gradient(circle at 0% 100%, rgba(0, 255, 255, 0.1), transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-cyber-glass backdrop-blur-xl border border-cyber-border rounded-2xl shadow-[0_0_15px_rgba(0,255,255,0.05)];
+  }
+  
+  .neon-text-cyan {
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5), 0 0 10px rgba(0, 255, 255, 0.3);
+  }
+  
+  .neon-text-magenta {
+    text-shadow: 0 0 5px rgba(255, 0, 255, 0.5), 0 0 10px rgba(255, 0, 255, 0.3);
+  }
+  
+  .neon-border-cyan {
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2), inset 0 0 10px rgba(0, 255, 255, 0.1);
+    border-color: rgba(0, 255, 255, 0.5);
+  }
+}
