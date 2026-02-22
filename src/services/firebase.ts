@@ -11,8 +11,15 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Only initialize if we have the minimum required config
-const isConfigured = !!(firebaseConfig.apiKey && firebaseConfig.databaseURL && firebaseConfig.projectId);
+// Only initialize if we have the minimum required config and they are not empty strings
+const isConfigured = !!(
+  firebaseConfig.apiKey && 
+  firebaseConfig.projectId && 
+  firebaseConfig.databaseURL &&
+  firebaseConfig.apiKey !== "" &&
+  firebaseConfig.projectId !== "" &&
+  firebaseConfig.databaseURL !== ""
+);
 
 let app: FirebaseApp | undefined;
 let db: Database | undefined;
@@ -20,7 +27,8 @@ let db: Database | undefined;
 if (isConfigured) {
   try {
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-    db = getDatabase(app);
+    // Explicitly pass the database URL to getDatabase to prevent "Can't determine URL" errors
+    db = getDatabase(app, firebaseConfig.databaseURL);
   } catch (error) {
     console.error("Firebase initialization failed:", error);
   }

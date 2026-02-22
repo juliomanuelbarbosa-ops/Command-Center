@@ -1,12 +1,16 @@
 import { Activity, Zap, Shield, Radio, TrendingUp, Globe } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useUser } from '../context/UserContext';
 
 export function HomeDashboard() {
+  const { settings } = useUser();
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <header className="mb-8 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-mono font-bold neon-text-cyan mb-2">COMMAND_CENTER_V6</h1>
-          <p className="text-gray-400 font-mono text-sm">OPERATIVE: <span className="text-cyber-cyan">GHOST_PROTOCOL</span> | STATUS: <span className="text-emerald-400">NOMINAL</span></p>
+          <p className="text-gray-400 font-mono text-sm">OPERATIVE: <span className="text-cyber-cyan">{settings.operatorId}</span> | STATUS: <span className="text-emerald-400">NOMINAL</span></p>
         </div>
         <div className="glass-panel px-4 py-2 flex items-center gap-3">
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -18,39 +22,51 @@ export function HomeDashboard() {
         <div className="glass-panel p-5 flex flex-col gap-3 group hover:neon-border-cyan transition-all">
           <div className="flex items-center justify-between text-cyber-cyan">
             <Activity className="w-5 h-5" />
-            <span className="font-mono text-xs">BIO_SYNC</span>
+            <span className="font-mono text-[10px]">BIO_SYNC</span>
           </div>
           <div className="text-3xl font-mono">98%</div>
           <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden">
-            <div className="bg-cyber-cyan h-full w-[98%]" />
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: '98%' }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="bg-cyber-cyan h-full" 
+            />
           </div>
         </div>
 
         <div className="glass-panel p-5 flex flex-col gap-3 group hover:border-cyber-magenta transition-all">
           <div className="flex items-center justify-between text-cyber-magenta">
             <Zap className="w-5 h-5" />
-            <span className="font-mono text-xs">NEURAL_LOAD</span>
+            <span className="font-mono text-[10px]">NEURAL_LOAD</span>
           </div>
-          <div className="text-3xl font-mono">42%</div>
-          <div className="text-xs text-gray-400 font-mono mt-1">Processing: 1.2 Tflops</div>
+          <div className="text-3xl font-mono">
+            <motion.span
+              animate={{ opacity: [1, 0.5, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              42%
+            </motion.span>
+          </div>
+          <div className="text-[10px] text-gray-400 font-mono mt-1">Processing: 1.2 Tflops</div>
         </div>
 
         <div className="glass-panel p-5 flex flex-col gap-3 group hover:border-emerald-400 transition-all">
           <div className="flex items-center justify-between text-emerald-400">
             <Shield className="w-5 h-5" />
-            <span className="font-mono text-xs">SEC_LEVEL</span>
+            <span className="font-mono text-[10px]">SEC_LEVEL</span>
           </div>
           <div className="text-3xl font-mono">MAX</div>
-          <div className="text-xs text-gray-400 font-mono mt-1">Firewall: Active</div>
+          <div className="text-[10px] text-gray-400 font-mono mt-1">Firewall: Active</div>
         </div>
 
         <div className="glass-panel p-5 flex flex-col gap-3 group hover:border-cyber-purple transition-all">
           <div className="flex items-center justify-between text-cyber-purple">
             <TrendingUp className="w-5 h-5" />
-            <span className="font-mono text-xs">MARKET_VOL</span>
+            <span className="font-mono text-[10px]">MARKET_VOL</span>
           </div>
           <div className="text-3xl font-mono">+12.4%</div>
-          <div className="text-xs text-gray-400 font-mono mt-1">Portfolio: Bullish</div>
+          <div className="text-[10px] text-gray-400 font-mono mt-1">Portfolio: Bullish</div>
         </div>
       </div>
 

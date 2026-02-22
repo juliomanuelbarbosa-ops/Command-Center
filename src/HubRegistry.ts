@@ -3,7 +3,7 @@ import {
   Music, Terminal, Globe, Lock, Database, 
   TrendingUp, CreditCard, Code, BookOpen, 
   Gamepad, Video, Layers, Share2, Search,
-  MessageSquare, Users
+  MessageSquare, Users, Settings
 } from 'lucide-react';
 
 export interface Hub {
@@ -65,4 +65,5 @@ export const HUB_REGISTRY: Hub[] = [
   { id: 'signal-nexus', name: 'Signal Nexus', icon: Radio, path: '/signal', category: 'GEO', description: 'Spectrum analysis' },
   { id: 'geo-sentinel', name: 'Geo Sentinel', icon: Shield, path: '/geo', category: 'GEO', description: 'Global alerts' },
   { id: 'visual-cortex', name: 'Visual Cortex', icon: Eye, path: '/vision', category: 'GEO', description: 'AR vision system' },
+  { id: 'settings', name: 'System Settings', icon: Settings, path: '/settings', category: 'CORE', description: 'Core configuration' },
 ];

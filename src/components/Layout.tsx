@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
-import { Home, Cpu, Radio, Activity, Shield, Zap, Command, Menu, X, Bell } from 'lucide-react';
+import { Home, Cpu, Radio, Activity, Shield, Zap, Command, Menu, X, Bell, User } from 'lucide-react';
 import { CommandPalette } from './CommandPalette';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -15,25 +15,31 @@ const NAV_ITEMS = [
 
 import { HUB_REGISTRY } from '../HubRegistry';
 
+import { useUser } from '../context/UserContext';
+import { useNotify } from '../context/NotificationContext';
+
 export function Layout() {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [notifications, setNotifications] = useState<{id: number, msg: string}[]>([]);
   const location = useLocation();
+  const { settings, xp } = useUser();
+  const { notify } = useNotify();
 
   const CORE_HUBS = HUB_REGISTRY.filter(h => h.category === 'CORE');
   const OTHER_HUBS = HUB_REGISTRY.filter(h => h.category !== 'CORE');
 
+  useEffect(() => {
+    // Random system heartbeats
+    const interval = setInterval(() => {
+      if (Math.random() > 0.95) {
+        notify("SYSTEM_HEARTBEAT: All modules operational", "INFO");
+      }
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [notify]);
+
   const triggerHaptic = useCallback((pattern = 10) => {
     if ('vibrate' in navigator) navigator.vibrate(pattern);
-  }, []);
-
-  const addNotification = useCallback((msg: string) => {
-    const id = Date.now();
-    setNotifications(prev => [...prev, { id, msg }]);
-    setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.id !== id));
-    }, 5000);
   }, []);
 
   // Shake to refresh & Haptics on Nav
@@ -50,7 +56,7 @@ export function Layout() {
         if (delta > 35) moveCounter++;
         else moveCounter = Math.max(0, moveCounter - 1);
         if (moveCounter > 8) {
-          triggerHaptic([50, 30, 50]);
+          triggerHaptic(50);
           window.location.reload();
         }
       }
@@ -72,7 +78,6 @@ export function Layout() {
         <div className="flex items-center gap-4">
           <button className="relative p-2 text-gray-400 hover:text-white transition-colors">
             <Bell className="w-5 h-5" />
-            {notifications.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-cyber-magenta rounded-full animate-pulse" />}
           </button>
         </div>
       </header>
@@ -80,27 +85,9 @@ export function Layout() {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto relative z-0 pb-24">
         <div className="max-w-7xl mx-auto p-4 md:p-8">
-          <Outlet context={{ addNotification, triggerHaptic }} />
+          <Outlet context={{ triggerHaptic }} />
         </div>
       </main>
-
-      {/* Notifications Overlay */}
-      <div className="fixed top-20 right-4 z-50 flex flex-col gap-2 pointer-events-none">
-        <AnimatePresence>
-          {notifications.map(n => (
-            <motion.div
-              key={n.id}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="glass-panel p-4 border-l-4 border-cyber-magenta pointer-events-auto min-w-[200px]"
-            >
-              <div className="text-[10px] font-mono text-cyber-magenta mb-1">INTEL_ALERT</div>
-              <div className="text-xs font-mono">{n.msg}</div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
 
       {/* Command FAB */}
       <button
@@ -168,9 +155,38 @@ export function Layout() {
                   </div>
                 ))}
               </div>
-              <div className="mt-auto pt-8 border-t border-white/5">
-                <div className="text-[10px] font-mono text-gray-600 mb-2">SYSTEM_VERSION: 6.0.4-STABLE</div>
-                <div className="text-[10px] font-mono text-gray-600">UPTIME: 142:12:05</div>
+              <div className="mt-auto pt-8 border-t border-white/5 space-y-4">
+                <div className="glass-panel p-4 bg-cyber-cyan/5 border-cyber-cyan/20">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-full bg-cyber-cyan/20 border border-cyber-cyan/50 flex items-center justify-center">
+                      <User className="w-6 h-6 text-cyber-cyan" />
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-gray-500 font-mono">OPERATOR_ID</div>
+                      <div className="text-xs text-white font-mono">{settings.operatorId}</div>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[10px] font-mono text-gray-500">
+                      <span>XP_LEVEL</span>
+                      <span>{Math.floor(xp / 1000) + 1}</span>
+                    </div>
+                    <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(xp % 1000) / 10}%` }}
+                        className="h-full bg-cyber-cyan shadow-[0_0_10px_rgba(0,255,255,0.5)]" 
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between px-4">
+                  <span className="text-[10px] font-mono text-gray-600">v6.0.4_STABLE</span>
+                  <div className="flex gap-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] font-mono text-emerald-500">ONLINE</span>
+                  </div>
+                </div>
               </div>
             </motion.div>
           </>
